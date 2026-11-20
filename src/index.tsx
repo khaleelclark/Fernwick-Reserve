@@ -50,6 +50,7 @@ function App() {
   const [advanceBy, setAdvanceBy] = useState(5)
   const agenda = useRef<HTMLHeadingElement>(null)
   const dialog = useRef<HTMLDialogElement>(null)
+  const recovery = useRef<HTMLButtonElement>(null)
   const opener = useRef<HTMLElement | null>(null)
   const pending = useRef(false)
 
@@ -111,6 +112,10 @@ function App() {
     ? state.futureSlots.find(slot => slot.resourceId === selection.slot.resourceId && slot.start === selection.slot.start && slot.end === selection.slot.end)
     : undefined
   const stale = selection && (selection.kind === 'released' ? !live?.endOptions.includes(end) : !future)
+
+  useEffect(() => {
+    if (stale && !busy) recovery.current?.focus()
+  }, [stale, busy])
 
   async function submitBooking() {
     if (!selection || stale) return
@@ -285,7 +290,7 @@ function App() {
           </select>
         </>}
         <div className="dialog-actions">
-          <button className="secondary" type="button" disabled={busy} onClick={() => setSelection(undefined)}>{stale ? 'View Available Times' : 'Cancel'}</button>
+          <button ref={recovery} className="secondary" type="button" disabled={busy} onClick={() => setSelection(undefined)}>{stale ? 'View Available Times' : 'Cancel'}</button>
           {!stale && <button className="primary" type="submit" disabled={busy}>{selection.kind === 'released' ? 'Book and Check In' : 'Confirm Reservation'}</button>}
         </div>
       </form>}
