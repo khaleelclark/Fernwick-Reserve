@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     port: 3001,
     proxy: {
-      '/api': 'http://127.0.0.1:3000',
+      '/api': `http://127.0.0.1:${process.env.RESERVE_API_PORT ?? '3000'}`,
     },
   },
 });

@@ -23,7 +23,9 @@ npm run build
 npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000). For development with hot reload, run `npm run dev:api` and `npm run dev` in separate terminals, then open [http://localhost:3001](http://localhost:3001).
+Open [http://localhost:3000](http://localhost:3000). If port 3000 is in use, run `PORT=3100 npm start` and open port 3100.
+
+For development with hot reload, run `npm run dev:api` and `npm run dev` in separate terminals, then open [http://localhost:3001](http://localhost:3001). To use a different API port during development, run `PORT=3100 npm run dev:api` and `RESERVE_API_PORT=3100 npm run dev`.
 
 ## Try the Demo
 
