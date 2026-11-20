@@ -197,32 +197,54 @@ function App() {
             const bookings = state!.bookings.filter(booking => booking.resourceId === resource.id && (booking.status === 'reserved' || booking.status === 'checked-in'))
             const futureSlots = state!.futureSlots.filter(slot => slot.resourceId === resource.id)
             const releasedSlots = state!.releasedSlots.filter(slot => slot.resourceId === resource.id)
-            const rows = [
-              ...bookings.map(slot => ({ kind: 'booking' as const, slot })),
-              ...futureSlots.map(slot => ({ kind: 'future' as const, slot })),
-              ...releasedSlots.map(slot => ({ kind: 'released' as const, slot })),
-            ].sort((a, b) => a.slot.start - b.slot.start)
             return <section className="resource" key={resource.id} aria-labelledby={`resource-${resource.id}`}>
               <h3 id={`resource-${resource.id}`}><span className="resource-glyph"><Glyph name={resource.kind} /></span>{resource.name}</h3>
-              {rows.length ? <ul className="agenda">
-                {rows.map(row => {
-                  const { slot } = row
-                  const detail = row.kind === 'booking' && row.slot.patronId === patronId ? 'Your Reservation' : ''
-                  return <li className={row.kind === 'released' ? 'released-row' : undefined} key={`${row.kind}-${slot.start}-${slot.end}`}>
-                    <div><strong>{range(slot.start, slot.end)}</strong>{detail && <small>{detail}</small>}{row.kind === 'booking' && canCheckIn(row.slot) && <small>Check in before {time(roomCheckInDeadline(row.slot))}.</small>}</div>
-                    {row.kind === 'booking'
-                      ? <span className={`badge ${canCheckIn(row.slot) ? 'available' : row.slot.status}`}>{bookingStatus(row.slot)}</span>
-                      : <span className="badge available">{row.kind === 'released' ? 'Available Now' : 'Available'}</span>}
-                    <div className="row-action">
-                      {row.kind === 'booking'
-                        ? canCheckIn(row.slot) && <button type="button" className="primary small" disabled={busy} onClick={() => void checkIn(row.slot)}>Check In</button>
-                        : <button type="button" className={`${row.kind === 'released' ? 'primary' : 'secondary'} small`} disabled={busy}
-                          aria-label={`${row.kind === 'released' ? 'Book and Check In' : 'Reserve Time'} for ${resource.name}, ${range(slot.start, slot.end)}`}
-                          onClick={event => openBooking(row, event.currentTarget)}>{row.kind === 'released' ? 'Book and Check In' : 'Reserve Time'}</button>}
+              {(releasedSlots.length > 0 || bookings.length > 0) && <ul className="agenda">
+                {releasedSlots.map(slot => <li className="released-row" key={slot.bookingId}>
+                  <div><strong>{range(slot.start, slot.end)}</strong></div>
+                  <span className="badge available">Available Now</span>
+                  <div className="row-action">
+                    <button type="button" className="primary small" disabled={busy}
+                      aria-label={`Book and Check In for ${resource.name}, ${range(slot.start, slot.end)}`}
+                      onClick={event => openBooking({ kind: 'released', slot }, event.currentTarget)}>Book and Check In</button>
+                  </div>
+                </li>)}
+                {bookings.map(booking => {
+                  const checkInOpen = canCheckIn(booking)
+                  return <li key={booking.id}>
+                    <div>
+                      <strong>{range(booking.start, booking.end)}</strong>
+                      {booking.patronId === patronId && <small>Your Reservation</small>}
+                      {checkInOpen && <small>Check in before {time(roomCheckInDeadline(booking))}.</small>}
                     </div>
+                    <span className={`badge ${checkInOpen ? 'available' : booking.status}`}>{bookingStatus(booking)}</span>
+                    {checkInOpen && <div className="row-action">
+                      <button type="button" className="primary small" disabled={busy} onClick={() => void checkIn(booking)}>Check In</button>
+                    </div>}
                   </li>
                 })}
-              </ul> : <p className="empty">No reservations or times are available for this resource.</p>}
+              </ul>}
+              <section className="future-times" aria-labelledby={`future-${resource.id}`}>
+                <h4 id={`future-${resource.id}`}>Reserve for Later</h4>
+                {futureSlots.length === 0 && <p>No future times are available today.</p>}
+                {(['Morning', 'Afternoon'] as const).map(group => {
+                  const slots = futureSlots.filter(slot => (slot.start < 12 * 60) === (group === 'Morning'))
+                  if (slots.length === 0) return null
+                  return <div className="time-group" key={group}>
+                    <h5>{group}</h5>
+                    <ul className="time-grid">
+                      {slots.map(slot => <li key={slot.start}>
+                        <button type="button" className="time-slot" disabled={busy}
+                          aria-label={`Reserve Time for ${resource.name}, ${range(slot.start, slot.end)}`}
+                          onClick={event => openBooking({ kind: 'future', slot }, event.currentTarget)}>
+                          <strong>{time(slot.start)}</strong>
+                          <span>Until {time(slot.end)}</span>
+                        </button>
+                      </li>)}
+                    </ul>
+                  </div>
+                })}
+              </section>
             </section>
           })}
         </section>
@@ -294,7 +316,7 @@ function App() {
     <dialog className="booking-dialog" ref={dialog} aria-labelledby="dialog-heading" onClose={restoreFocus} onCancel={event => { if (pending.current) event.preventDefault() }}>
       {selection && <form onSubmit={event => { event.preventDefault(); void submitBooking() }}>
         <h2 id="dialog-heading">{selection.kind === 'released' ? 'Book and Check In' : 'Reserve Time'}</h2>
-        <p>{bookingName(selection.slot.resourceId)} · {range(selection.slot.start, selection.slot.end)}</p>
+        <p className="selected-time">{bookingName(selection.slot.resourceId)} · {range(selection.slot.start, selection.slot.end)}</p>
         {selection.kind === 'released' && <p>Your booking starts immediately and checks you in automatically.</p>}
         <div role="alert" aria-atomic="true">{notice?.error && <p className="notice error">{notice.text}</p>}</div>
         {stale && <p>Close this dialog to choose from the refreshed times.</p>}

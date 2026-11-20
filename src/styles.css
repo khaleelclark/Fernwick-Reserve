@@ -17,7 +17,7 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; }
-h1, h2, h3, p { margin: 0; }
+h1, h2, h3, h4, h5, p { margin: 0; }
 p { line-height: 1.55; }
 button, select { font: inherit; }
 button { cursor: pointer; }
@@ -52,8 +52,8 @@ button:disabled, select:disabled { opacity: .55; cursor: default; }
 h2 { font-size: 1.2rem; letter-spacing: -.025em; }
 .schedule-heading h2 { font-size: 1.45rem; }
 .schedule-heading p, .side-card p, .booking-dialog p { font-size: .9rem; color: var(--muted); margin-top: 5px; }
-.resource { border: 1px solid var(--line); border-radius: 10px; margin-top: 12px; overflow: hidden; }
-.resource h3 { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--lavender); font-size: 1.03rem; }
+.resource { border: 1px solid var(--line); border-radius: 10px; margin-top: 12px; }
+.resource h3 { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--lavender); border-radius: 9px 9px 0 0; font-size: 1.03rem; }
 .resource-glyph { display: grid; place-items: center; background: #e3d9f1; color: var(--purple-dark); width: 32px; height: 32px; border-radius: 8px; }
 .resource-glyph svg { width: 18px; height: 18px; }
 .agenda, .own-bookings { margin: 0; padding: 0; list-style: none; }
@@ -63,6 +63,19 @@ h2 { font-size: 1.2rem; letter-spacing: -.025em; }
 .agenda small { display: block; font-size: .79rem; color: var(--muted); margin-top: 4px; }
 .agenda .released-row { background: var(--pale-green); box-shadow: inset 4px 0 var(--green); }
 .row-action { text-align: right; }
+
+.future-times { padding: 16px 14px 18px; border-top: 1px solid var(--line); }
+.future-times h4 { font-size: 1rem; }
+.future-times p { color: var(--muted); font-size: .88rem; margin-top: 7px; }
+.time-group { margin-top: 13px; }
+.time-group h5 { margin-bottom: 7px; color: var(--muted); font-size: .8rem; }
+.time-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(112px, 100%), 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.time-slot { display: grid; justify-items: start; gap: 2px; width: 100%; min-height: 50px; padding: 7px 9px; color: var(--purple-dark); background: #fcfaff; border: 1px solid #cbbedf; border-radius: 8px; text-align: start; font-variant-numeric: tabular-nums; }
+.time-slot strong { font-size: .86rem; }
+.time-slot span { color: var(--muted); font-size: .74rem; }
+.time-slot:hover:enabled { background: var(--lavender); border-color: var(--purple); }
+.booking-dialog .selected-time { margin-top: 12px; padding: 9px 10px; background: var(--lavender); color: var(--purple-dark); border-radius: 7px; font-weight: 650; }
+
 .badge { display: inline-block; justify-self: start; padding: 4px 8px; background: var(--lavender); color: var(--purple-dark); border-radius: 5px; font-size: .75rem; font-weight: 700; }
 .badge.available, .badge.checked-in { color: var(--green-dark); background: var(--pale-green); }
 .badge.expired { background: #fff1cd; color: #664711; }
