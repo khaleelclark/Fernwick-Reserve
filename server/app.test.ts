@@ -40,7 +40,7 @@ test('expiry at the deadline enables competing claims and the remainder reopens'
   const expired = await advance(1)
   assert.equal(expired.bookings[0].status, 'expired')
   assert.deepEqual(expired.releasedSlots[0].endOptions, [625, 640, 650])
-  assert.deepEqual(summarizeRoomRecovery(expired.bookings), { releasedBookings: 1, reclaimedBookings: 0, recoveredMinutes: 0 })
+  assert.deepEqual(summarizeRoomRecovery(expired.bookings), { releasedBookings: 1, reclaimedBookings: 0, releasedMinutes: 40, recoveredMinutes: 0 })
   await post('check-in', { patronId: 'maya', bookingId: 'booking-1' }, 409)
   const request = { bookingId: 'booking-1', start: 610, end: 640 }
   const responses = await Promise.all([
@@ -60,9 +60,9 @@ test('expiry at the deadline enables competing claims and the remainder reopens'
   assert.equal(atBoundary.bookings[3].end, atBoundary.bookings[1].start)
   const ended = await advance(10)
   assert.equal(ended.bookings[1].status, 'reserved')
-  assert.deepEqual(summarizeRoomRecovery(ended.bookings), { releasedBookings: 1, reclaimedBookings: 1, recoveredMinutes: 40 })
+  assert.deepEqual(summarizeRoomRecovery(ended.bookings), { releasedBookings: 1, reclaimedBookings: 1, releasedMinutes: 40, recoveredMinutes: 40 })
   const reset = await post('demo/reset', {})
-  assert.deepEqual(summarizeRoomRecovery(reset.bookings), { releasedBookings: 0, reclaimedBookings: 0, recoveredMinutes: 0 })
+  assert.deepEqual(summarizeRoomRecovery(reset.bookings), { releasedBookings: 0, reclaimedBookings: 0, releasedMinutes: 0, recoveredMinutes: 0 })
 })
 
 test('future room and PC bookings reject overlaps and reset restores the seed', async (t) => {

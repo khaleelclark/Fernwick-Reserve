@@ -1,3 +1,5 @@
+export const ROOM_CHECK_IN_GRACE_MINUTES = 10
+
 export interface Resource {
   id: string
   name: string
@@ -47,6 +49,10 @@ export interface ApiError {
   state: ReserveState
 }
 
+export function roomCheckInDeadline(booking: Pick<Booking, 'start' | 'end'>) {
+  return Math.min(booking.start + ROOM_CHECK_IN_GRACE_MINUTES, booking.end)
+}
+
 export function summarizeRoomRecovery(bookings: readonly Booking[]) {
   const released = bookings.filter(booking => booking.status === 'expired')
   const releasedIds = new Set(released.map(booking => booking.id))
@@ -63,6 +69,7 @@ export function summarizeRoomRecovery(bookings: readonly Booking[]) {
   return {
     releasedBookings: released.length,
     reclaimedBookings: reclaimedIds.size,
+    releasedMinutes: released.reduce((total, booking) => total + booking.end - roomCheckInDeadline(booking), 0),
     recoveredMinutes,
   }
 }

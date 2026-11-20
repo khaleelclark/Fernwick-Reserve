@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { summarizeRoomRecovery } from '../shared/reserve'
+import { ROOM_CHECK_IN_GRACE_MINUTES, roomCheckInDeadline, summarizeRoomRecovery } from '../shared/reserve'
 import type { ApiError, Booking, FutureSlot, ReleasedSlot, ReserveState, Resource } from '../shared/reserve'
 import './styles.css'
 
@@ -145,7 +145,7 @@ function App() {
   function canCheckIn(booking: Booking) {
     return state && booking.status === 'reserved' && booking.patronId === patronId &&
       state.resources.some(resource => resource.id === booking.resourceId && resource.kind === 'room') &&
-      state.now >= booking.start && state.now < Math.min(booking.start + 10, booking.end)
+      state.now >= booking.start && state.now < roomCheckInDeadline(booking)
   }
 
   function bookingStatus(booking: Booking) {
@@ -186,7 +186,7 @@ function App() {
           </nav>
           <div className="schedule-heading">
             <div><h2 id="agenda-heading" ref={agenda} tabIndex={-1}>{view === 'room' ? 'Room Agenda' : 'Computer Agenda'}</h2>
-              <p>{view === 'room' ? 'Check in within 10 minutes of your room booking’s start to keep it.' : 'Select an available time to reserve a computer.'}</p></div>
+              <p>{view === 'room' ? `Check in within ${ROOM_CHECK_IN_GRACE_MINUTES} minutes of your room booking’s start to keep it.` : 'Select an available time to reserve a computer.'}</p></div>
             <button type="button" className="secondary small" disabled={busy} onClick={() => void request('state', undefined, 'Availability refreshed.')}>Refresh Availability</button>
           </div>
           <div role="status" aria-atomic="true">{!selection && notice && !notice.error && <p className="notice success">{notice.text}</p>}</div>
@@ -209,7 +209,7 @@ function App() {
                   const { slot } = row
                   const detail = row.kind === 'booking' && row.slot.patronId === patronId ? 'Your Reservation' : ''
                   return <li className={row.kind === 'released' ? 'released-row' : undefined} key={`${row.kind}-${slot.start}-${slot.end}`}>
-                    <div><strong>{range(slot.start, slot.end)}</strong>{detail && <small>{detail}</small>}{row.kind === 'booking' && canCheckIn(row.slot) && <small>Check in before {time(Math.min(row.slot.start + 10, row.slot.end))}.</small>}</div>
+                    <div><strong>{range(slot.start, slot.end)}</strong>{detail && <small>{detail}</small>}{row.kind === 'booking' && canCheckIn(row.slot) && <small>Check in before {time(roomCheckInDeadline(row.slot))}.</small>}</div>
                     {row.kind === 'booking'
                       ? <span className={`badge ${canCheckIn(row.slot) ? 'available' : row.slot.status}`}>{bookingStatus(row.slot)}</span>
                       : <span className="badge available">{row.kind === 'released' ? 'Available Now' : 'Available'}</span>}
@@ -233,7 +233,7 @@ function App() {
             {expiredBookings.map(booking => <div className="expiry" key={booking.id}>
               <h3>Your Booking Expired</h3>
               <p>{bookingName(booking.resourceId)} · {range(booking.start, booking.end)}</p>
-              <p>The check-in window ended at {time(Math.min(booking.start + 10, booking.end))}.</p>
+              <p>The check-in window ended at {time(roomCheckInDeadline(booking))}.</p>
               <button type="button" className="secondary small" onClick={findRoomTimes}>View Available Times</button>
             </div>)}
             {!currentBookings.length && <p className="side-empty">You have no upcoming or active reservations.</p>}
@@ -244,7 +244,7 @@ function App() {
                   <strong>{bookingName(booking.resourceId)}</strong>
                   <p>{range(booking.start, booking.end)}</p>
                   <span className={`badge ${canCheckIn(booking) ? 'available' : booking.status}`}>{bookingStatus(booking)}</span>
-                  {room && booking.status === 'reserved' && <p>Check in from {time(booking.start)} to before {time(Math.min(booking.start + 10, booking.end))}.</p>}
+                  {room && booking.status === 'reserved' && <p>Check in from {time(booking.start)} to before {time(roomCheckInDeadline(booking))}.</p>}
                   {canCheckIn(booking) && <button type="button" className="primary small" disabled={busy} onClick={() => void checkIn(booking)}>Check In</button>}
                 </li>
               })}
@@ -282,10 +282,10 @@ function App() {
               {recoveryMetrics ? <dl className="recovery-metrics">
                 <div><dt>No-Show Bookings Released</dt><dd>{recoveryMetrics.releasedBookings}</dd></div>
                 <div><dt>Released Bookings Reclaimed</dt><dd>{recoveryMetrics.reclaimedBookings}</dd></div>
-                <div><dt>Room Minutes Recovered</dt><dd>{recoveryMetrics.recoveredMinutes}</dd></div>
+                <div><dt>Room Minutes Recovered</dt><dd>{recoveryMetrics.recoveredMinutes} of {recoveryMetrics.releasedMinutes}</dd></div>
               </dl> : <p>Waiting for booking data.</p>}
             </div>
-            <p>Recovered minutes come from new bookings with confirmed check-ins.</p>
+            <p>This compares minutes in new bookings with confirmed check-ins with all minutes freed by no-shows.</p>
           </details>
         </aside>
       </div>

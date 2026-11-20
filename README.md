@@ -30,15 +30,15 @@ For development with hot reload, run `npm run dev:api` and `npm run dev` in sepa
 ## Try the Demo
 
 1. **Check In on Time.** The demo starts at 9:55 AM. Start as Maya Chen, whose room reservation starts at 10:00 AM. Advance to the booking start, select **Check In**, then advance to 10:10 AM. The room stays booked.
-2. **Release a No-Show.** Reset the demo and advance to 10:10 AM without checking in. The original booking expires. Open **View Available Times**, choose a duration, and select **Book and Check In**. Either patron can take the released time.
-3. **Try a Stale Claim.** Open two tabs with different patrons at the same released slot. Claim it in one tab, then submit the old choice in the other. Reserve rejects the conflict and refreshes the choices.
+2. **Release a No-Show.** Reset the demo and advance to 10:10 AM without checking in. The original booking expires. Open **View Available Times** in Maya’s tab. Before claiming a slot, open a second tab, set its patron to Jordan Ellis, and open **Book and Check In** in both tabs.
+3. **Try a Stale Claim.** Claim 15 minutes in Maya’s tab. Submit the old choice in Jordan’s tab. Reserve rejects the conflict and refreshes the choices. Open **Staff View** in Maya’s tab to see one no-show released, one release reclaimed, and **15 of 40** minutes recovered.
 4. **Make a Future Reservation.** Choose **Room Calendar** or **Public PC Booking**, then select **Reserve Time** on an available 30-minute slot. Public PC reservations use the timeline without the room check-in rule.
 
 **Demo Controls** apply to the shared simulated clock and data. Advancing or resetting in one tab affects the server state for every tab. A tab may keep its previous view until it refreshes or submits an action. The selected patron is a demo identity. Restarting the app resets its fictional data.
 
 ## Staff View
 
-Open **Staff View** beside the room agenda. Reset the demo, advance to 10:10 AM, and claim 15 minutes. The counters show one no-show released, one released booking reclaimed, and 15 room minutes recovered. Multiple claims on the same release count as one reclaimed booking. Their minutes add up, including after the claims end. Reset clears all three counters. Select **Refresh Availability** to see changes made in another tab.
+Open **Staff View** beside the room agenda. Reset the demo, advance to 10:10 AM, and claim 15 minutes. The counters show one no-show released, one released booking reclaimed, and 15 of 40 room minutes recovered. The total counts time freed after the check-in window ends. Multiple claims on the same release count as one reclaimed booking. Their minutes add up, including after the claims end. Reset clears all three counters. Select **Refresh Availability** to see changes made in another tab.
 
 ## Checks and Design Notes
 

@@ -2,6 +2,7 @@ import fastifyStatic from '@fastify/static'
 import Fastify from 'fastify'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { roomCheckInDeadline } from '../shared/reserve.js'
 import type { Booking, FutureSlot, Patron, ReleasedSlot, ReserveState, Resource } from '../shared/reserve.js'
 
 const patrons: Patron[] = [
@@ -142,7 +143,7 @@ export function buildApp({ browserDist = resolve('dist') } = {}) {
     }
     now += minutes
     for (const booking of bookings) {
-      if (booking.status === 'reserved' && booking.resourceId === roomId && now >= booking.start + 10) {
+      if (booking.status === 'reserved' && booking.resourceId === roomId && now >= roomCheckInDeadline(booking)) {
         booking.status = 'expired'
       } else if ((booking.status === 'reserved' || booking.status === 'checked-in') && now >= booking.end) {
         booking.status = 'complete'
