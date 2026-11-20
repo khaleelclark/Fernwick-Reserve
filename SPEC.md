@@ -13,7 +13,7 @@ Fernwick Reserve already provides public PC booking and a basic room calendar, a
 
 ## Interface
 
-Use the EnvisionWare site's purple and green as the main accents on light surfaces. Use navy from the supplied logo for text and keep the original Fernwick branding. Use title case for headings, navigation, buttons and status labels. Use ordinary sentence case for explanatory sentences. The agenda puts time available now and existing bookings above future time buttons grouped by Morning and Afternoon. It shows exact start and end times and uses text as well as color for status. Messages announce success and conflicts to assistive technology. The simulated clock, patron switcher and reset live in a separate demo panel.
+Use EnvisionWare purple for navigation and selection, green for available room time and check-in actions, cyan for time and resource details, and gold for expiry notices and demo controls. Use navy text and keep the original Fernwick branding. Use title case for headings, navigation, buttons and status labels. Use ordinary sentence case for explanatory sentences. The agenda puts time available now and existing bookings above future time buttons grouped by Morning and Afternoon. It shows exact start and end times and uses text as well as color for status. Messages announce success and conflicts to assistive technology. The simulated clock, patron switcher and reset live in a separate demo panel.
 
 ## Architecture
 
