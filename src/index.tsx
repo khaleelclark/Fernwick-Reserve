@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
+import { summarizeRoomRecovery } from '../shared/reserve'
 import type { ApiError, Booking, FutureSlot, ReleasedSlot, ReserveState, Resource } from '../shared/reserve'
 import './styles.css'
 
@@ -155,6 +156,7 @@ function App() {
   const resources = state?.resources.filter(resource => resource.kind === view) ?? []
   const ownBookings = state?.bookings.filter(booking => booking.patronId === patronId)
     .sort((a, b) => a.start - b.start) ?? []
+  const recoveryMetrics = state && summarizeRoomRecovery(state.bookings)
   const expiredBookings = ownBookings.filter(booking => booking.status === 'expired')
   const currentBookings = ownBookings.filter(booking => booking.status === 'reserved' || booking.status === 'checked-in')
 
@@ -225,7 +227,7 @@ function App() {
           })}
         </section>
 
-        <aside aria-label="Reservations and Demo Controls">
+        <aside aria-label="Reservations, Demo Controls, and Staff View">
           <section className="side-card" aria-labelledby="reservations-heading">
             <h2 id="reservations-heading">Your Reservations</h2>
             {expiredBookings.map(booking => <div className="expiry" key={booking.id}>
@@ -272,6 +274,19 @@ function App() {
               }
             }}>Reset Demo</button>
           </section>
+
+          <details className="side-card staff">
+            <summary>Staff View</summary>
+            <p>Room recovery for this demo session.</p>
+            <div role="status" aria-atomic="true">
+              {recoveryMetrics ? <dl className="recovery-metrics">
+                <div><dt>No-Show Bookings Released</dt><dd>{recoveryMetrics.releasedBookings}</dd></div>
+                <div><dt>Released Bookings Reclaimed</dt><dd>{recoveryMetrics.reclaimedBookings}</dd></div>
+                <div><dt>Room Minutes Recovered</dt><dd>{recoveryMetrics.recoveredMinutes}</dd></div>
+              </dl> : <p>Waiting for booking data.</p>}
+            </div>
+            <p>Recovered minutes come from new bookings with confirmed check-ins.</p>
+          </details>
         </aside>
       </div>
     </main>

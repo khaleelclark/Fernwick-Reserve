@@ -75,6 +75,11 @@ h2 { font-size: 1.2rem; letter-spacing: -.025em; }
 .small { min-height: 36px; font-size: .82rem; padding: 7px 10px; }
 .side-card { background: white; border: 1px solid var(--line); border-radius: 13px; padding: 17px; box-shadow: 0 3px 12px #4e39870c; }
 .side-card + .side-card { margin-top: 16px; }
+.staff summary { cursor: pointer; color: var(--purple-dark); font-size: 1.2rem; font-weight: 700; }
+.recovery-metrics { margin-block: 12px 8px; }
+.recovery-metrics div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-top: 1px solid var(--line); }
+.recovery-metrics dt { font-size: .86rem; }
+.recovery-metrics dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
 .own-bookings li { margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--line); }
 .own-bookings .badge { margin-top: 7px; }
 .own-bookings button { display: block; margin-top: 9px; }

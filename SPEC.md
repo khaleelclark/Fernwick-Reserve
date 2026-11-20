@@ -34,7 +34,7 @@ All times are integer minutes after midnight on one simulated day. Successful AP
 
 ## Pilot Measures
 
-Track the share of released room bookings reclaimed and the released minutes covered by new bookings with confirmed check-ins. Track confirmed wrongful releases and double bookings, with a target of zero for both. For a rollout funding decision, update the payback model using paid commitments and activation dates.
+Staff View shows the session totals for no-show bookings released, distinct releases reclaimed, and released minutes covered by new bookings with confirmed check-ins. Each release counts once as reclaimed even if multiple patrons book portions of it. Totals reset with the demo. Use the first two totals to calculate the share reclaimed. Track confirmed wrongful releases and double bookings, with a target of zero for both. For a rollout funding decision, update the payback model using paid commitments and activation dates.
 
 ## Acceptance Scenarios
 

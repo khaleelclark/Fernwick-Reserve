@@ -46,3 +46,23 @@ export interface ApiError {
   message: string
   state: ReserveState
 }
+
+export function summarizeRoomRecovery(bookings: readonly Booking[]) {
+  const released = bookings.filter(booking => booking.status === 'expired')
+  const releasedIds = new Set(released.map(booking => booking.id))
+  const reclaimedIds = new Set<string>()
+  let recoveredMinutes = 0
+
+  for (const booking of bookings) {
+    if (!booking.releasedFrom || !releasedIds.has(booking.releasedFrom)) continue
+    if (booking.status !== 'checked-in' && booking.status !== 'complete') continue
+    reclaimedIds.add(booking.releasedFrom)
+    recoveredMinutes += booking.end - booking.start
+  }
+
+  return {
+    releasedBookings: released.length,
+    reclaimedBookings: reclaimedIds.size,
+    recoveredMinutes,
+  }
+}

@@ -36,6 +36,10 @@ For development with hot reload, run `npm run dev:api` and `npm run dev` in sepa
 
 **Demo Controls** apply to the shared simulated clock and data. Advancing or resetting in one tab affects the server state for every tab. A tab may keep its previous view until it refreshes or submits an action. The selected patron is a demo identity. Restarting the app resets its fictional data.
 
+## Staff View
+
+Open **Staff View** beside the room agenda. Reset the demo, advance to 10:10 AM, and claim 15 minutes. The counters show one no-show released, one released booking reclaimed, and 15 room minutes recovered. Multiple claims on the same release count as one reclaimed booking. Their minutes add up, including after the claims end. Reset clears all three counters. Select **Refresh Availability** to see changes made in another tab.
+
 ## Checks and Design Notes
 
 Run `npm test` for the booking rules and API tests. Run `npm run build` to type-check and produce the application. [SPEC.md](SPEC.md) covers the release rules, API, and pilot measures.
